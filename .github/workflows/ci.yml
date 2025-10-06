@@ -35,4 +35,4 @@ jobs:
         run: dotnet test --no-build -c Release --verbosity normal
 
       - name: Pack
-        run: dotnet pack ToDo.Core/ToDo.Core.csproj -c Release -o ./artifacts
+        run: dotnet pack Todo.Core/Todo.Core.csproj -c Release -o ./artifacts
