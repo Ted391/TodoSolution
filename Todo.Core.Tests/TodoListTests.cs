@@ -28,5 +28,41 @@ namespace Todo.Core.Tests
             Assert.Single(found);
             Assert.Equal("Buy milk", found[0].Title);
         }
+        [Fact]
+        public void SaveAndLoad_PersistsTasks()
+        {
+            var originalList = new TodoList();
+            originalList.Add("Купить хлеб");
+            var itemToComplete = originalList.Add("Сделать домашнее задание");
+            itemToComplete.MarkDone();
+
+            string tempFilePath = Path.GetTempFileName();
+
+            try
+            {
+                originalList.Save(tempFilePath);
+
+                var loadedList = new TodoList();
+                loadedList.Load(tempFilePath);
+
+                Assert.Equal(originalList.Count, loadedList.Count);
+
+                var originalItem = originalList.Items.First(i => i.Title == "Сделать домашнее задание");
+                var loadedItem = loadedList.Items.FirstOrDefault(i => i.Id == originalItem.Id);
+
+                Assert.NotNull(loadedItem);
+                Assert.Equal(originalItem.Title, loadedItem.Title);
+                Assert.Equal(originalItem.IsDone, loadedItem.IsDone);
+                Assert.True(loadedItem.IsDone);
+            }
+            finally
+            {
+                // Очистка
+                if (File.Exists(tempFilePath))
+                {
+                    File.Delete(tempFilePath);
+                }
+            }
+        }
     }
 }
